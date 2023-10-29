@@ -1,41 +1,95 @@
-import React, { useRef } from "react";
-import { Box, Divider, Stack, Step, StepContent, StepLabel, Stepper } from "@mui/material";
+import React, { useRef, useState } from "react";
+import {
+  Box,
+  Button,
+  Divider,
+  Portal,
+  Stack,
+  Step,
+  StepContent,
+  StepLabel,
+  Stepper,
+  TextField,
+} from "@mui/material";
 
 const formSteps = [
-  { index: 0, label: "form 0", component: <>form 0 component</> },
-  { index: 1, label: "form 1", component: <>form 1 component</> },
-  { index: 0, label: "form 2", component: <>form 2 component</> },
+  { index: 0, label: "PII 0", component: <Stack direction='column' spacing={2}>
+    <Box>
+      <TextField label='Name'/>
+    </Box>
+    <Box>
+      <TextField label='Age'/>
+    </Box>
+    <Box>
+      <TextField label='Hobby'/>
+    </Box>
+  </Stack> },
+  { index: 1, label: "Profession 1", component: <Stack direction='column' spacing={2}>
+    <Box>
+      <TextField label='Title'/>
+    </Box>
+    <Box>
+      <TextField label='Experience'/>
+    </Box>
+    <Box>
+      <TextField label='Achievments'/>
+    </Box>
+  </Stack> },
+  { index: 2, label: "label 2", component: <Stack direction='column'>Completed</Stack> },
 ];
 
-
 export const PortalledContainer = () => {
-  const container = useRef(null)
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
+  const container = useRef(null);
   return (
-    <Stack direction="row" className='PortalledContainer' sx={{width:'100%',height:'100%'}} spacing={2}>
-      <Box
-        className="sidepanel-showStepperIndexes"
-        sx={{ flex: "0 0 20%" }}
-      >
+    <Stack
+      direction="row"
+      className="PortalledContainer"
+      sx={{ width: "100%", height: "100%", }}
+      spacing={2}
+    >
+      <Box className="sidepanel-showStepperIndexes" sx={{ flex: "0 0 20%" }}>
         {/* show steppers list */}
-        <Stepper orientation="vertical">
-          {formSteps.map(step=> (
+        <Stepper orientation="vertical" activeStep={currentStepIndex}>
+          {formSteps.map((step) => (
             <Step>
               <StepLabel>{step.label}</StepLabel>
-              <StepContent></StepContent>
+              <StepContent ref={container}>
+                <Portal container={container.current}>{step.component}</Portal>
+              </StepContent>
             </Step>
           ))}
         </Stepper>
       </Box>
-      
+
       <Divider orientation="vertical" />
 
-      <Box className="portalledComponent" sx={{ flex: "0 1" }}>
+      <Stack
+        direction="column"
+        className="portalledComponent"
+        sx={{ flex: "1 0" }}
+      >
         <h2>Portal container</h2>
 
-        <Box ref={container}>
-          {/* active stepper component should appear here */}
+        <Box className="portalWindow" sx={{flex:'1',outline:'1px solid orange',padding:'10px'}} ref={container}>
+         
         </Box>
-      </Box>
+        <Box>
+          <Button
+            onClick={() => setCurrentStepIndex(currentStepIndex - 1)}
+            disabled={currentStepIndex <= 0}
+          >
+            Prev
+          </Button>
+          <Button
+            onClick={() => setCurrentStepIndex(currentStepIndex + 1)}
+            disabled={currentStepIndex >= formSteps.length - 1}
+          >
+            Next
+          </Button>
+        </Box>
+      </Stack>
     </Stack>
   );
 };
