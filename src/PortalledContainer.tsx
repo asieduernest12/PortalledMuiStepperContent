@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -39,9 +39,19 @@ const formSteps = [
 ];
 
 export const PortalledContainer = () => {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState();
 
   const container = useRef(null);
+
+  useEffect(()=>{
+    setCurrentStepIndex(0)
+  },[])
+
+  if (currentStepIndex===null){
+    return <>initializing...</>
+  }
+
+
   return (
     <Stack
       direction="row"
